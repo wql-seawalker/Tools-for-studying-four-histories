@@ -3,6 +3,7 @@ screencapture;
 special_situation;
 temp_img=original_picture(370:450,400:600,:); % 提取特征区域
 flag = 0;
+flag2 = 1;
 tikuhao = 0;
 for i=1:count
     if temp_img == tiku(:,:,:,i) % 题库中已有该题
@@ -12,20 +13,34 @@ for i=1:count
     end
 end
 if flag % 题库已有该题目，只需要找到相应答案
-    for i=1:5
-        if daan(tikuhao,i) ~= 0
-            click(287,daan(tikuhao,i));
+    for i=1:size(daan2,1)
+        if tikuhao == daan2(i,1)
+            if original_picture(400:700,400:600,:) == tiku2(:,:,:,i)
+                for j=2:6
+                    if daan2(i,j) ~= 0
+                        click(287,daan2(i,j));
+                        flag2=0;
+                    end
+                end
+            end
+        end
+    end
+    if flag2
+        for i=1:5
+            if daan(tikuhao,i) ~= 0
+                click(287,daan(tikuhao,i));
+            end
         end
     end
     for i=500:1440
         if original_picture(i,300,:) == redflag
             click(300,i+10);% 点提交
             click(1,720);
-            screencapture;
+            screencapture2;
             temp_xxx=zeros(1,5);% 判断选项位置
             countt=1;
             for i=1:1440
-                if original_picture(i,274,:) == trueflag
+                if original_picture2(i,274,:) == trueflag
                     if countt==1
                         temp_xxx(1,countt) = i;
                         countt = countt + 1;
@@ -37,7 +52,8 @@ if flag % 题库已有该题目，只需要找到相应答案
             end
             if temp_xxx == [0,0,0,0,0]
             else
-                daan(tikuhao,:)=temp_xxx;
+                tiku2=cat(4,tiku2,original_picture(400:700,400:600,:));
+                daan2=[daan2;tikuhao,temp_xxx];
             end
             pause(0.1);
             break;

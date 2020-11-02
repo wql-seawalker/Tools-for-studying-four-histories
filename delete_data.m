@@ -8,3 +8,5 @@ end
 save('count.mat','count');
 save('tiku.mat','tiku');
 save('daan.mat','daan');
+save('daan2.mat','daan2');
+save('tiku2.mat','tiku2');
