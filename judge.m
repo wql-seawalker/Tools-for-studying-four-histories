@@ -5,6 +5,8 @@ temp_img=original_picture(370:450,400:600,:); % 提取特征区域
 flag = 0;
 flag2 = 1;
 tikuhao = 0;
+
+% 对已有题库的搜索
 for i=1:count
     if temp_img == tiku(:,:,:,i) % 题库中已有该题
         flag = 1;
@@ -12,19 +14,25 @@ for i=1:count
         break;
     end
 end
+
+% 搜索到该题目 进行点击操作
 if flag % 题库已有该题目，只需要找到相应答案
+    % 对于第二题库优先搜索
     for i=1:size(daan2,1)
         if tikuhao == daan2(i,1)
-            if original_picture(400:700,400:600,:) == tiku2(:,:,:,i)
+            if original_picture(360:430,300:1300,:) == tiku2(:,:,:,i)
+                flag2=0;% 搜索到该题目
                 for j=2:6
                     if daan2(i,j) ~= 0
                         click(287,daan2(i,j));
-                        flag2=0;
                     end
                 end
+                break;
             end
         end
     end
+    
+    % 在第二题库没有搜索到该题目，在第一题库进行操作
     if flag2
         for i=1:5
             if daan(tikuhao,i) ~= 0
@@ -32,9 +40,11 @@ if flag % 题库已有该题目，只需要找到相应答案
             end
         end
     end
+    % 提交 并反馈是否正确
     for i=500:1440
         if original_picture(i,300,:) == redflag
             click(300,i+10);% 点提交
+            % 判断答案是否正确，以确定是否加入第二题库
             click(1,720);
             screencapture2;
             temp_xxx=zeros(1,5);% 判断选项位置
@@ -52,18 +62,20 @@ if flag % 题库已有该题目，只需要找到相应答案
             end
             if temp_xxx == [0,0,0,0,0]
             else
-                tiku2=cat(4,tiku2,original_picture(400:700,400:600,:));
+                tiku2=cat(4,tiku2,original_picture(360:430,300:1300,:));
                 daan2=[daan2;tikuhao,temp_xxx];
+                pause(0.1);
             end
             pause(0.1);
             break;
         end
     end
+% 题库中没有该题目，则添加入第一题库
 else % 题库中还没有该题
     count = count + 1;
     tiku=cat(4,tiku,temp_img);
-    
-    temp_xx=zeros(1,5);% 判断选项位置
+    % 判断选项位置
+    temp_xx=zeros(1,5);
     countt=1;
     for i=1:1440
         if original_picture(i,274,:) == capflag
@@ -77,6 +89,7 @@ else % 题库中还没有该题
             end
         end
     end
+    % 点击提交
     for i=500:1440
         if original_picture(i,300,:) == redflag
             click(300,i+10);% 点提交
@@ -87,6 +100,7 @@ else % 题库中还没有该题
             break;
         end
     end
+    % 判断正确选项位置
     temp_xxx=zeros(1,5);% 判断选项位置
     countt=1;
     for i=1:1440
